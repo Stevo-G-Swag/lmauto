@@ -74,10 +74,10 @@ class LLMAgent:
             choices = [{"content": choice['content']} for choice in response.choices]
             return PromptResponse(id=response.id, choices=choices)
         except ValidationError as ve:
-            print(f"Validation error: {ve}")
+            app.logger.error(f"Validation error: {ve}", exc_info=True)
             raise
         except Exception as e:
-            print(f"Failed to send prompt: {e}")
+            app.logger.error(f"Failed to send prompt: {e}", exc_info=True)
             raise
 
     def set_model(self, model: str):
@@ -103,10 +103,17 @@ def handle_prompt():
     """
     Handles a prompt request and returns the response.
     """
-    data = request.get_json()
-    prompt_request = PromptRequest(**data)
-    response = agent.send_prompt(prompt_request)
-    return jsonify({'id': response.id, 'choices': response.choices})
+    try:
+        data = request.get_json()
+        prompt_request = PromptRequest(**data)
+        response = agent.send_prompt(prompt_request)
+        return jsonify({'id': response.id, 'choices': response.choices})
+    except ValidationError as ve:
+        app.logger.error(f"Validation error on prompt data: {ve.errors()}", exc_info=True)
+        return jsonify({"error": ve.errors()}), 400
+    except Exception as e:
+        app.logger.error(f"Failed to handle prompt: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

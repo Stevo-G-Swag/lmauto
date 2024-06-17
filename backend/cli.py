@@ -3,16 +3,14 @@ import os
 import sys
 
 import typer
+from backend.agent_system import trigger_system
 from flask import Flask
 from openai.api import Model, OpenAI
 
 # Adjust the Python module search path to correctly point to the project root directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from backend.agent_system import trigger_system
-
-# Remove the unused import statement
-# from .main import app as flask_app
 
 app = Flask(__name__)
 

@@ -11,7 +11,7 @@ from pydantic import ValidationError
 # Adjust the Python module search path to correctly point to the project root directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from backend.models.llm_agent import LLMAgent, PromptRequest
+from .llm_agent import LLMAgent, PromptRequest
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

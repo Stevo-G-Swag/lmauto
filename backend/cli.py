@@ -1,17 +1,20 @@
+import logging
 import os
 import sys
-import logging
 
 import typer
 from flask import Flask
-import openai
-
-app = Flask(__name__)
+from openai.api import Model, OpenAI
 
 # Adjust the Python module search path to correctly point to the project root directory
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from .main import app as flask_app
+from backend.agent_system import trigger_system
+
+# Remove the unused import statement
+# from .main import app as flask_app
+
+app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,8 +29,10 @@ def init_agents(model_name: str = typer.Option(..., help="The name of the model 
     """
     try:
         # Initialize the LLM agents
-        openai.api_key = "YOUR_OPENAI_API_KEY"
-        models = openai.Model.list()["data"]
+        OpenAI.api_key = os.getenv("OPENAI_API_KEY")
+        if OpenAI.api_key is None:
+            raise ValueError("OPENAI_API_KEY is not set in the environment variables.")
+        models = Model.list()["data"]
         model_ids = [model["id"] for model in models]
         if model_name not in model_ids:
             typer.echo("Available models:")
@@ -55,14 +60,14 @@ def start_server(port: int = typer.Option(8000, help="The port on which to run t
         logger.error("Failed to start the Flask application: %s", e, exc_info=True)
         typer.echo(f"Failed to start the server: {e}")
 
+
 @cli.command(name="trigger-system")
-def trigger_system():
+def trigger_system_command():
     """
     Trigger the multi-agent system.
     """
     try:
         # Trigger the multi-agent system
-        from .agent_system import trigger_system
         trigger_system()
         logger.info("Multi-agent system has been triggered.")
         typer.echo("Multi-agent system triggered.")
@@ -70,6 +75,7 @@ def trigger_system():
         logger.error("Error during triggering the multi-agent system: %s", e, exc_info=True)
         typer.echo(f"Error occurred: {e}")
         raise e
+
 
 def run():
     """

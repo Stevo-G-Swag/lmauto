@@ -1,8 +1,13 @@
 import os
+import sys
+
 from dotenv import load_dotenv
+from flask import Flask, jsonify, request
 from openai import OpenAI
 from pydantic import BaseModel, ValidationError
-from flask import Flask, request, jsonify
+
+# Adjust the Python module search path to correctly point to the project root directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -88,7 +93,8 @@ class LLMAgent:
 # Create an instance of the LLMAgent
 api_key = os.getenv("OPENAI_API_KEY")
 if api_key is None:
-    raise ValueError("OPENAI_API_KEY is not set in the environment variables.")
+    raise ValueError("OPENAI_API_KEY is not set in the environment variables. Please ensure your OPENAI_API_KEY is set in the .env file.")
+
 agent = LLMAgent(api_key=api_key, model="gpt-4")
 
 # Define a route for the web app

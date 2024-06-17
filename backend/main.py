@@ -1,11 +1,15 @@
-import os
 import logging
+import os
+import sys
 import uuid
 from typing import Dict, List
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from pydantic import ValidationError
+
+# Adjust the Python module search path to correctly point to the project root directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from models.llm_agent import LLMAgent, PromptRequest
 
@@ -16,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY is not set in the environment variables.")
+    raise ValueError("OPENAI_API_KEY is not set in the environment variables.")  # Ensure your OPENAI_API_KEY is set in the .env file.
 
 # Initialize Flask app
 app = Flask(__name__)

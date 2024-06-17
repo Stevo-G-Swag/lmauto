@@ -12,7 +12,7 @@ certifi==2024.6.2
     # via
     #   httpcore
     #   httpx
-click==8.0.3  # Specify a compatible version of click
+click==8.0.3
     # via
     #   flask
     #   typer
@@ -35,12 +35,10 @@ itsdangerous==2.2.0
 jinja2==3.1.4
     # via flask
 markupsafe==2.1.5
-    # via
-    #   jinja2
-    #   werkzeug
+    # via jinja2
 openai==1.34.0
     # via -r requirements.in
-pydantic==1.9.0
+pydantic==1.10.13
     # via
     #   -r requirements.in
     #   openai
